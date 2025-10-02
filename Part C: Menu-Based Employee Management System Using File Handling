@@ -1,0 +1,112 @@
+//Part C: Menu-Based Employee Management System Using File Handling
+
+import java.io.*;
+import java.util.Scanner;
+
+class Employee {
+    private int id;
+    private String name;
+    private String designation;
+    private double salary;
+
+    // Constructor
+    public Employee(int id, String name, String designation, double salary) {
+        this.id = id;
+        this.name = name;
+        this.designation = designation;
+        this.salary = salary;
+    }
+
+    // Format data for saving to file
+    public String toFileFormat() {
+        return id + "," + name + "," + designation + "," + salary;
+    }
+
+    // Readable format for displaying
+    @Override
+    public String toString() {
+        return "ID: " + id + " | Name: " + name + " | Designation: " + designation + " | Salary: " + salary;
+    }
+}
+
+public class Part3 {
+    private static final String FILENAME = "employees.txt";
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int choice;
+
+        while (true) {
+            System.out.println("\n===== Employee Management System =====");
+            System.out.println("1. Add Employee");
+            System.out.println("2. Display All Employees");
+            System.out.println("3. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+            scanner.nextLine(); // consume newline
+
+            switch (choice) {
+                case 1:
+                    addEmployee(scanner);
+                    break;
+                case 2:
+                    displayEmployees();
+                    break;
+                case 3:
+                    System.out.println("Exiting application... Goodbye!");
+                    return;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+
+    // Add employee to file
+    private static void addEmployee(Scanner scanner) {
+        System.out.print("Enter Employee ID: ");
+        int id = scanner.nextInt();
+        scanner.nextLine(); // consume newline
+
+        System.out.print("Enter Employee Name: ");
+        String name = scanner.nextLine();
+
+        System.out.print("Enter Designation: ");
+        String designation = scanner.nextLine();
+
+        System.out.print("Enter Salary: ");
+        double salary = scanner.nextDouble();
+
+        Employee emp = new Employee(id, name, designation, salary);
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILENAME, true))) {
+            writer.write(emp.toFileFormat());
+            writer.newLine();
+            System.out.println("Employee added successfully!");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Display employees from file
+    private static void displayEmployees() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILENAME))) {
+            String line;
+            System.out.println("\n--- Employee Records ---");
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data.length == 4) {
+                    int id = Integer.parseInt(data[0]);
+                    String name = data[1];
+                    String designation = data[2];
+                    double salary = Double.parseDouble(data[3]);
+                    Employee emp = new Employee(id, name, designation, salary);
+                    System.out.println(emp);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("No employee records found.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}

@@ -1,0 +1,52 @@
+// Part b: Serialization and Deserialization of a Student Object
+
+import java.io.*;
+
+// Step 1: Create Student class implementing Serializable
+class Student implements Serializable {
+    private static final long serialVersionUID = 1L; // For version control
+    private int studentID;
+    private String name;
+    private String grade;
+
+    // Constructor
+    public Student(int studentID, String name, String grade) {
+        this.studentID = studentID;
+        this.name = name;
+        this.grade = grade;
+    }
+
+    // Method to display student info
+    public void displayInfo() {
+        System.out.println("Student ID: " + studentID);
+        System.out.println("Name: " + name);
+        System.out.println("Grade: " + grade);
+    }
+}
+
+// Step 2: Main class for serialization & deserialization
+public class Part2 {
+    public static void main(String[] args) {
+        String filename = "student.ser";
+
+        // Create a student object
+        Student student = new Student(101, "Priyanshu Verma", "A");
+
+        // ----------------- Serialization -----------------
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filename))) {
+            out.writeObject(student); // Serialize object
+            System.out.println("Student object serialized and saved to " + filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // ----------------- Deserialization -----------------
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename))) {
+            Student deserializedStudent = (Student) in.readObject(); // Deserialize object
+            System.out.println("\nDeserialized Student Data:");
+            deserializedStudent.displayInfo();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+}
